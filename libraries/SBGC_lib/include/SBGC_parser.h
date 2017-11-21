@@ -218,6 +218,11 @@ public:
 	    state = STATE_WAIT;
 		parser_error_count = 0;
 	}
+
+	inline void init_noCom() {
+		state = STATE_WAIT;
+		parser_error_count = 0;
+	}
 	
 	inline void onParseError(uint8_t error = PARSER_ERROR_PROTOCOL) { 
 		parser_error_count++; 
