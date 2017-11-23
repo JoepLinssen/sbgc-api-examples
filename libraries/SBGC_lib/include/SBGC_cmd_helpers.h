@@ -165,6 +165,27 @@ typedef struct {
 uint8_t SBGC_cmd_realtime_data_unpack(SBGC_cmd_realtime_data_t &p, SerialCommand &cmd);
 
 
+// CMD_REALTIME_DATA (old)
+typedef struct {
+	struct {
+		int16_t acc_data;
+		int16_t gyro_data;
+	} sensor_data[3];  // ACC and Gyro sensor data (with calibration) for current IMU (see cur_imu field
+	//3*int16_t reserved
+	int16_t debug; // debug variables
+	int16_t rc_raw_data[6]; // RC signal in 1000..2000 range for ROLL, PITCH, YAW, CMD, EXT FC ROLL, EXT FC PITCH
+	int16_t imu_angle[3]; // ROLL, PITCH, YAW Euler angles of the camera, 16384/360 degrees
+	int16_t frame_imu_angle[3]; // ROLL, PITCH, YAW Euler angles of a frame, if known
+	uint16_t cycle_time_us; // cycle time in us. Normally should be 800us
+	uint16_t i2c_error_count; // I2C errors counter
+	uint8_t error_code; // bit set of system errors 
+	uint16_t battery_voltage; // units 0.01 V
+	uint8_t state_flags1; // bit0: motor ON/OFF state;  bits1..7: reserved
+	uint8_t cur_profile; // active profile number starting from 0
+} SBGC_cmd_realtime_old_t;
+
+uint8_t SBGC_cmd_realtime_old_unpack(SBGC_cmd_realtime_old_t &p, SerialCommand &cmd);
+
 
 inline uint8_t SBGC_cmd_execute_menu_send(uint8_t menu_action, SBGC_Parser &parser) {
 	SerialCommand cmd;
