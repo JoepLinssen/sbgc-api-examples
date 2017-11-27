@@ -295,8 +295,23 @@ public:
 
 		return 0;
 	}
-	
-	
+
+	/* Parse message
+	 * Returns 0 on error, 1 on success
+	 */
+	inline uint8_t parse_message(uint8_t *msg, uint8_t len) {
+		uint16_t start_err = get_parse_error_count();
+		uint8_t i = 0;
+		while(!process_char(msg[i]))
+			 if(++i >= len || get_parse_error_count() > start_err) {
+				 //incomplete or corrupt message
+				 reset();
+				 return 0;
+			 }
+
+		return 1;
+	}
+
 	/*
 	 * Formats and writes command to serial port.
 	 * If wait=1, waits even if output buffer is full.

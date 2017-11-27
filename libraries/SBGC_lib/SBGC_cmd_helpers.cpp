@@ -195,3 +195,27 @@ uint8_t SBGC_cmd_realtime_data_unpack(SBGC_cmd_realtime_data_t &p, SerialCommand
 }
 
 
+/*
+* Unpacks SerialCommand object to command structure.
+* Returns 0 on success, PARSER_ERROR_XX code on fail.
+*/
+uint8_t SBGC_cmd_realtime_old_unpack(SBGC_cmd_realtime_old_t &p, SerialCommand &cmd) {
+		for(uint8_t i=0; i<3; i++) {
+			p.sensor_data[i].acc_data = cmd.readWord();
+			p.sensor_data[i].gyro_data = cmd.readWord();
+		}
+		cmd.skipBytes(6); // reserved
+		p.debug = cmd.readWord();
+		cmd.readWordArr(p.rc_raw_data, 6);
+		cmd.readWordArr(p.imu_angle, 3);
+		cmd.readWordArr(p.frame_imu_angle, 3);
+		p.cycle_time_us = cmd.readWord();
+		p.i2c_error_count = cmd.readWord();
+		p.error_code = cmd.readByte();
+		p.battery_voltage = cmd.readWord();
+		p.state_flags1 = cmd.readByte();
+		p.cur_profile = cmd.readByte();
+		
+		if(cmd.checkLimit()) return 0;
+		else return PARSER_ERROR_WRONG_DATA_SIZE;
+}
